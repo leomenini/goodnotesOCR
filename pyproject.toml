@@ -1,0 +1,18 @@
+[project]
+name = "goodnotesocr"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "leoMenini", email = "lmenini0402@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "goodnotes-document-parser",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+goodnotes-document-parser = { git = "https://github.com/Kaih1825/parser-for-goodnotes", rev = "66028455fd7fc61b7931679915d811a25485e3ad" }
