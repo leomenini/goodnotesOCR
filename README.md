@@ -1,11 +1,11 @@
 # goodnotesOCR
 
-Turns a page of handwritten GoodNotes notes into compilable LaTeX.( NOT WORKING)
+Turns a page of handwritten GoodNotes notes into compilable LaTeX.
 
 Takes a page from the PDF GoodNotes exports, sends it to Gemini, and compiles
 the result with `tectonic`. LaTeX that does not compile counts as a failure.
 
-Personal tool for physics and maths notes.( Not been able to make it work with drawings or svgs)
+Personal tool for physics and maths notes.
 
 ## Setup
 
@@ -55,6 +55,10 @@ non-obvious ways:
 
 ## Limitations
 
+- **Not in working shape as a tool.** The pipeline transcribes and compiles a
+  page, but it is not reliable enough to use for real work yet.
+- Drawings and SVGs never worked. Getting figures out of the notes, either as
+  vectors or as anything better than a description, is unsolved.
 - One page per call; there is no whole-notebook processing.
 - A dense page costs around 30K output tokens.
 - Diagrams are not reproduced, only described in a sentence.
