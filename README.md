@@ -57,11 +57,10 @@ non-obvious ways:
 
 - **Not in working shape as a tool.** The pipeline transcribes and compiles a
   page, but it is not reliable enough to use for real work yet.
-- Drawings and SVGs never worked. Getting figures out of the notes, either as
-  vectors or as anything better than a description, is unsolved.
+- Drawings and SVGs never worked. Diagrams are not reproduced, only described
+  in a sentence; getting them out as figures is unsolved.
 - One page per call; there is no whole-notebook processing.
 - A dense page costs around 30K output tokens.
-- Diagrams are not reproduced, only described in a sentence.
 - The Gemini free tier allows 15 calls per minute per model and returns 503
   often. Retry with a wait.
 
