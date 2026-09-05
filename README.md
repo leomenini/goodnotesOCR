@@ -1,11 +1,11 @@
 # goodnotesOCR
 
-Turns a page of handwritten GoodNotes notes into compilable LaTeX.
+Turns a page of handwritten GoodNotes notes into compilable LaTeX.( NOT WORKING)
 
 Takes a page from the PDF GoodNotes exports, sends it to Gemini, and compiles
 the result with `tectonic`. LaTeX that does not compile counts as a failure.
 
-Personal tool for physics and maths notes.
+Personal tool for physics and maths notes.( Not been able to make it work with drawings or svgs)
 
 ## Setup
 
@@ -61,6 +61,4 @@ non-obvious ways:
 - The Gemini free tier allows 15 calls per minute per model and returns 503
   often. Retry with a wait.
 
-## License
 
-MIT.
