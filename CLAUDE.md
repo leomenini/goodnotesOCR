@@ -13,12 +13,21 @@ The long-term goal is to stop typing up exercises and notes by hand.
 
 ## State
 
-An end-to-end pipeline works: exported PDF → Gemini → LaTeX → compiled with
-`tectonic` as verification. See `README.md` for architecture, usage and
-current limitations.
+An end-to-end pipeline runs: exported PDF → Gemini → LaTeX → compiled with
+`tectonic` as verification. A page transcribes and compiles, but **the author
+does not consider the tool usable yet**: quality is not reliable enough for
+real work, and drawings never worked. Do not describe it as finished.
 
 The mandatory baseline has been run and **it changed the project's direction**.
 Read "Baseline results" below before proposing anything.
+
+Branches: `main` holds the working pipeline. `experiment/stroke-figures`
+(pushed) holds the two rejected approaches described under "Decisions already
+made"; it exists so the code is recoverable, not as work in progress.
+
+See `README.md` for architecture, usage and limitations. Keep it strictly
+about what the code currently does: no ideas, no history, no rejected paths.
+Those belong here.
 
 ## Available inputs
 
@@ -98,7 +107,10 @@ Do not reopen without discussing:
    Useless for fractions, integrals, subscripts and handwriting.
 2. **There is no viable open source online recognizer.** Having the strokes
    does NOT give you a recognizer. Serious handwritten maths recognition today
-   is MyScript, and it is proprietary.
+   is MyScript, and it is proprietary. (Unread lead: `papers/2405.09032v4.pdf`,
+   "ICAL: Implicit Character-Aided Learning for Enhanced Handwritten
+   Mathematical Expression Recognition". Nobody has checked whether it changes
+   this conclusion.)
 3. **The pipeline starts from the exported PDF, not from strokes.** Reversed
    from the original idea, because of the baseline above.
 4. **Mechanical verification.** LaTeX output that does not compile is failed
@@ -140,3 +152,6 @@ Do not reopen without discussing:
   to compile.
 - The Gemini key lives in `.env` (git-ignored). The free tier allows 15 calls
   per minute per model and returns 503 often: retry.
+- Reference PDFs go in `papers/` (git-ignored). Generated output goes in
+  `out/` (git-ignored). Do not commit either.
+- Docs are in English. Conversation with the author is in Spanish.
