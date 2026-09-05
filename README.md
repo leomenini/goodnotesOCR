@@ -1,81 +1,66 @@
 # goodnotesOCR
 
-Convierte apuntes manuscritos de GoodNotes (iPad) en LaTeX compilable.
+Turns a page of handwritten GoodNotes notes into compilable LaTeX.
 
-Toma una página del PDF que GoodNotes exporta, se la manda a Gemini, y
-verifica el resultado compilándolo con `tectonic`. Si el LaTeX no compila, la
-salida se considera fallida.
+Takes a page from the PDF GoodNotes exports, sends it to Gemini, and compiles
+the result with `tectonic`. LaTeX that does not compile counts as a failure.
 
-Herramienta personal, para apuntes de física y matemática.
+Personal tool for physics and maths notes.
 
-## Instalación
+## Setup
 
-Requiere Python 3.13, [uv](https://docs.astral.sh/uv/) y
-[tectonic](https://tectonic-typesetting.github.io/) en el `PATH`.
+Needs Python 3.13, [uv](https://docs.astral.sh/uv/) and
+[tectonic](https://tectonic-typesetting.github.io/). Run `uv sync`, then put
+`GEMINI_API_KEY=...` in a `.env` file at the repo root.
 
-```bash
-uv sync
-```
-
-La API key de Gemini va en un archivo `.env` en la raíz del repo (está en
-`.gitignore`):
-
-```
-GEMINI_API_KEY=...
-```
-
-## Uso
+## Usage
 
 ```python
 from goodnotesocr import pipeline
 
-result = pipeline.run_page("ruta/al/cuaderno.pdf", page_index=1)  # 0-indexed
-print(result.compiled)      # True si el LaTeX compiló
-print(result.tex_path)      # out/pipeline/cuaderno_p2.tex
-print(result.pdf_out_path)  # out/pipeline/cuaderno_p2.pdf (solo si compiló)
-print(result.log_path)      # log de tectonic, útil cuando falla
+result = pipeline.run_page("notebook.pdf", page_index=1)  # 0-indexed
+print(result.compiled)      # True if the LaTeX compiled
+print(result.tex_path)      # out/pipeline/notebook_p2.tex
+print(result.pdf_out_path)  # out/pipeline/notebook_p2.pdf, only if it compiled
+print(result.log_path)      # tectonic log, useful when it fails
 ```
 
-Todo lo generado va a `out/`, que está en `.gitignore`.
+## Architecture
 
-## Arquitectura
+Four modules in `src/goodnotesocr/`, one per step:
 
-Cuatro módulos en `src/goodnotesocr/`, uno por paso:
+**`pdf_render.py`** — Rasterizes a PDF page to PNG with `pymupdf`, 200 DPI by
+default.
 
-**`pdf_render.py`** — Rasteriza una página del PDF a PNG con `pymupdf`, a 200
-DPI por defecto. También expone `page_count`.
+**`vlm.py`** — Gemini client. Sends the image plus a fixed prompt that asks for
+the document body only and explicitly forbids Markdown, preamble, opening
+sentences and code fences. Without those rules the model returns Markdown with
+embedded formulas, which does not compile. Diagrams are requested as a
+one-line bracketed description.
 
-**`vlm.py`** — Cliente sobre la API de Gemini. Manda la imagen más un prompt
-fijo y devuelve el LaTeX. El prompt pide únicamente el cuerpo del documento,
-sin preámbulo, y prohíbe explícitamente Markdown, frases introductorias y
-cercas de código; sin esas reglas el modelo devuelve Markdown con fórmulas
-embebidas, que no compila. Los diagramas se piden como una descripción de una
-línea entre corchetes.
+**`verify.py`** — Wraps the body in a minimal preamble and compiles it with
+`tectonic`, returning success, the log and the PDF bytes.
 
-**`verify.py`** — Envuelve el cuerpo en un preámbulo mínimo y compila con
-`tectonic`. Devuelve éxito, el log y los bytes del PDF.
+**`pipeline.py`** — Chains the three steps and writes `.tex`, `.pdf` and log
+under `out/pipeline/`.
 
-**`pipeline.py`** — Encadena los tres pasos, limpia una eventual cerca de
-código, y guarda `.tex`, `.pdf` y log bajo `out/pipeline/`.
+### Preamble notes
 
-### Detalles del preámbulo
+`tectonic` runs XeTeX, where two parts of the obvious preamble fail in
+non-obvious ways:
 
-`tectonic` corre XeTeX, y dos cosas del preámbulo obvio fallan de formas poco
-obvias:
+- With `inputenc`/`fontenc`, `¿` renders as `£`. `fontspec` is used instead.
+- Spanish `babel` makes the straight quote an active character, turning
+  `"Conductor"` into `Çonductor"`. It is loaded with `es-noshorthands`.
 
-- Con `inputenc`/`fontenc` el signo `¿` sale como `£`. Se usa `fontspec`, que
-  da Unicode completo.
-- `babel` con español convierte la comilla recta en carácter activo, y
-  `"Conductor"` termina como `Çonductor"`. Se carga con `es-noshorthands`.
+## Limitations
 
-## Limitaciones
+- One page per call; there is no whole-notebook processing.
+- A dense page costs around 30K output tokens.
+- Diagrams are not reproduced, only described in a sentence.
+- The Gemini free tier allows 15 calls per minute per model and returns 503
+  often. Retry with a wait.
 
-- Se procesa una página por llamada; no hay procesamiento de cuadernos enteros.
-- Una página densa consume alrededor de 30K tokens de salida.
-- Los diagramas no se reproducen: quedan como una frase descriptiva.
-- El free tier de Gemini limita a 15 llamadas por minuto y por modelo, y
-  devuelve 503 con frecuencia. Conviene reintentar con espera.
-
-## Licencia
+## License
 
 MIT.
