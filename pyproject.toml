@@ -7,6 +7,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "goodnotes-document-parser",
     "google-genai>=2.22.0",
     "pymupdf>=1.28.2",
     "python-dotenv>=1.2.3",
@@ -15,3 +16,6 @@ dependencies = [
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.sources]
+goodnotes-document-parser = { git = "https://github.com/Kaih1825/parser-for-goodnotes", rev = "66028455fd7fc61b7931679915d811a25485e3ad" }
